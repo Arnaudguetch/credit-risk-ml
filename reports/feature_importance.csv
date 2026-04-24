@@ -1,0 +1,26 @@
+feature,importance
+cat__Housing_rent,0.07057085
+cat__Saving accounts_rich,0.068012945
+num__Duration,0.0631027
+cat__Checking account_moderate,0.055560596
+cat__Saving accounts_little,0.054324057
+cat__Purpose_education,0.054134056
+cat__Housing_own,0.051870756
+cat__Purpose_radio/TV,0.05108739
+cat__Checking account_rich,0.046942875
+num__Credit amount,0.04629104
+cat__Sex_female,0.04264054
+num__Unnamed: 0,0.042238407
+num__Age,0.0416803
+cat__Purpose_business,0.039474018
+cat__Purpose_car,0.038149845
+cat__Housing_free,0.037226755
+num__Job,0.037029475
+cat__Checking account_little,0.035787083
+cat__Purpose_furniture/equipment,0.03452643
+cat__Saving accounts_moderate,0.030111166
+cat__Saving accounts_quite rich,0.029789075
+cat__Purpose_repairs,0.015872449
+cat__Sex_male,0.0135772405
+cat__Purpose_domestic appliances,0.0
+cat__Purpose_vacation/others,0.0
