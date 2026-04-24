@@ -33,6 +33,8 @@ python src/evaluate.py
 python src/explain.py
 
 </> Bash
-mlflow ui
+mlflow ui -> running mlflow app
+uvicorn api.app:app --reload  && then http://127.0.0.1:8000/docs -> running the serving app
+
 
 
