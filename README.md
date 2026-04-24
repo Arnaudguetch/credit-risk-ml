@@ -30,6 +30,7 @@ pip install -r requirements.txt
 ```bash
 python src/train.py
 python src/evaluate.py
+python src/explain.py
 
 </> Bash
 mlflow ui
