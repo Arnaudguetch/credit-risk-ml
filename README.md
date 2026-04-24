@@ -36,5 +36,5 @@ python src/explain.py
 mlflow ui -> running mlflow app
 uvicorn api.app:app --reload  && then http://127.0.0.1:8000/docs -> running the serving app
 
-
+streamlit run streamlit_app.py -> to run streamlit app
 
