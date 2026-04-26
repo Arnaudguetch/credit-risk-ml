@@ -28,6 +28,7 @@ pip install -r requirements.txt
 
 > How to run the project :
 ```bash
+python src/data_preprocessing.py
 python src/train.py
 python src/evaluate.py
 python src/explain.py
@@ -37,4 +38,9 @@ mlflow ui -> running mlflow app
 uvicorn api.app:app --reload  && then http://127.0.0.1:8000/docs -> running the serving app
 
 streamlit run streamlit_app.py -> to run streamlit app
+
+docker build -t credit-risk-api . -> to build docker image
+docker run -p 8000:8000 credit-risk-api -> to run docker image
+
+http://localhost:8000/docs -> to show the Swagger doc 
 

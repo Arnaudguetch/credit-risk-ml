@@ -17,7 +17,11 @@ def load_data(csv_path: str | Path) -> pd.DataFrame:
     csv_path = Path(csv_path)
     if not csv_path.exists():
         raise FileNotFoundError(f"Dataset not found at: {csv_path}")
-    return pd.read_csv(csv_path)
+    df = pd.read_csv(csv_path)
+    
+    if "Unnamed: 0" in df.columns:
+        df = df.drop(columns=["Unnamed: 0"])
+    return df
 
 def split_features_target(
     df: pd.DataFrame,

@@ -6,6 +6,10 @@ app = FastAPI(title="Credit Risk Scoring API")
 
 model = joblib.load("models/xgboost_pipeline.pkl")
 
+@app.get("/")
+def root():
+    return {"message": "Credit Risk API is running"}
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
@@ -19,5 +23,5 @@ def predict(data: dict):
     return {
         "default_probability": float(probability),
         "prediction": prediction,
-        "risk_label": "bad" if prediction == 1 else "goood"
+        "risk_label": "bad" if prediction == 1 else "good"
     }
