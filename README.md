@@ -4,6 +4,29 @@
 ### 1.1 Objective
 > Predict customer default risk using ML models to support lending decisions.
 
+> Credit-Risk-Scoring
+  |
+  |-api
+  |  
+  |-data
+  |  |-processed
+  |  |-raw
+  |   
+  |-models
+  |
+  |-notebooks
+  |
+  |-reports
+  |
+  |-src
+  |
+  |-k8s
+  |
+  |-.github
+  |   |workflow
+
+  
+
 ### 1.2 Stack
 - Python
 - scikit-learn
