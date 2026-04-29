@@ -1,0 +1,9 @@
+$schema: https://azuremlschemas.azureedge.net/latest/workspace.schema.json
+name: <Credit-Risk-Scoring-Workspace>
+location: <France Central>
+display_name: Arnaud-workspace
+description: A workspace for developing and deploying credit risk scoring models.
+tags:
+  purpose: develop-and-deploy-ML-models
+  team: ws-data-science-IA
+  project: credit-risk-scoring

@@ -1,0 +1,78 @@
+name: CI/CD with Azure VM Minikube
+on:
+  push:
+    branches: [ main ]
+
+env:
+  IMAGE_NAME: credit-risk-api
+
+jobs:
+  ci-k8s:
+    runs-on: [ self-hosted, linux, x64 ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set image tag
+      run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip 
+        pip3 install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        pytest tests/
+
+    - name: Train model
+      run: |
+        python3 src/train.py
+
+    - name: Evaluate model
+      run: |
+        python3 src/evaluate.py
+
+    - name: Generate SHAP report
+      run: |
+        python3 src/explain.py
+
+    - name: Upload model and reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: model-and-reports
+        path: |
+          models/*.pkl
+          reports/*.png
+          reports/*.csv
+
+    - name: Start Minikube
+      run: |
+        minikube start --driver=docker
+
+    - name: Build Docker image inside Minikube
+      run: |
+        eval $(minikube docker-env)
+        docker build -t $IMAGE_NAME:$IMAGE_TAGE .
+        docker tag $IMAGE_NAME:$IMAGE_TAGE $IMAGE_NAME:latest 
+
+    - name: Deploy to kubernetes
+      run: |
+        sed "s|IMAGE_PLACEHOLDER|$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
+        kubectl apply -f k8s/service.yaml 
+        kubectl rollout status deployment/credit-risk-api 
+
+    - name: Show runner info
+      run: |
+        hostname
+        whoami
+        docker ps
+        kubectl get nodes
+        kubectl get all
+
+    - name: Test API kubernetes
+      run: |
+        kubectl port-forward service/credit-risk-service 8000:88
+        sleep 10
+        curl -f http://127.0.0.1:8000/health
