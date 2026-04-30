@@ -23,5 +23,5 @@ def predict(data: dict):
     return {
         "default_probability": float(probability),
         "prediction": prediction,
-        "risk_label": "bad" if prediction == 1 else "good"
+        "risk_label": "bad" if prediction == 1 else "good",
     }

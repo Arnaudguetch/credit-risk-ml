@@ -1,27 +1,29 @@
-import joblib
+import os
+import requests
 import pandas as pd
-import streamlit as st 
+import streamlit as st
 
-MODEL_PATH = "models/xgboost_pipeline.pkl"
 DATA_PATH = "data/raw/german_credit_data.csv"
-TARGET_COL = "Risk"
+TARGET_COL = "Risk"  
+API_URL = os.getenv("API_URL", "http://localhost:8000")
 
 st.set_page_config(page_title="Credit Risk Scoring", layout="centered")
 
 st.title("Credit Risk Scoring")
-st.write("Demo of client default risk prediction.")
-
-@st.cache_resource
-def load_model():
-    return joblib.load(MODEL_PATH)
+st.write("Demo of client default risk prediction using FastAPI.")
 
 @st.cache_data
 def load_reference_data():
     df = pd.read_csv(DATA_PATH)
-    X = df.drop(columns=[TARGET_COL])
-    return X
 
-model = load_model()
+    if TARGET_COL not in df.columns:
+        raise ValueError(
+            f"Target column '{TARGET_COL}' not found. "
+            f"Available columns: {list(df.columns)}"
+        )
+
+    return df.drop(columns=[TARGET_COL])
+
 X_ref = load_reference_data()
 
 st.subheader("Client Information")
@@ -33,7 +35,7 @@ for col in X_ref.columns:
         min_val = float(X_ref[col].min())
         max_val = float(X_ref[col].max())
         mean_val = float(X_ref[col].mean())
-        
+
         user_input[col] = st.number_input(
             label=col,
             min_value=min_val,
@@ -42,26 +44,44 @@ for col in X_ref.columns:
         )
     else:
         values = sorted(X_ref[col].dropna().unique().tolist())
-        
+
         user_input[col] = st.selectbox(
             label=col,
             options=values,
         )
-if st.button("Prédire le risque"):
-    input_df = pd.DataFrame([user_input])
-    
-    probability = model.predict_proba(input_df)[0][1]
-    prediction = int(probability >= 0.5)
-    
-    st.subheader("Results")
-    
-    st.metric(
-        label="Probability of default",
-        value=f"{probability:.2%}",
-    )
-    
-    if prediction == 1:
-        st.error("Status of prediction : BAD RISK")
-    else:
-        st.success("Status of prediction : GOOD RISK")
 
+if st.button("Prédire le risque"):
+    try:
+        response = requests.post(
+            f"{API_URL}/predict",
+            json=user_input,
+            timeout=10,
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+
+            st.subheader("Results")
+
+            st.metric(
+                label="Probability of default",
+                value=f"{result['default_probability']:.2%}",
+            )
+
+            if result["prediction"] == 1:
+                st.error("Status of prediction: BAD RISK")
+            else:
+                st.success("Status of prediction: GOOD RISK")
+
+        else:
+            st.error(f"API error: {response.status_code}")
+            st.write(response.text)
+
+    except requests.exceptions.ConnectionError:
+        st.error(
+            "Impossible de contacter l'API FastAPI. "
+            "Vérifie que l'API tourne bien sur http://localhost:8000"
+        )
+
+    except Exception as e:
+        st.error(f"Unexpected error: {e}")
