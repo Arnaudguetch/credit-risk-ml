@@ -36,8 +36,14 @@ jobs:
     - name: Run tests
       run: |
         . .venv/bin/activate
+        export PYTHONPATH=$PWD
         pytest tests/
 
+    - name: Debug paths
+      run: |
+        pwd
+        ls -R
+        
     - name: Train model
       run: |
         . .venv/bin/activate
