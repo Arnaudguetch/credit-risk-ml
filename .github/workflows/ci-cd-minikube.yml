@@ -2,7 +2,10 @@ name: CI/CD with Azure VM Minikube
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
 
 env:
   IMAGE_NAME: credit-risk-api
