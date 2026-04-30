@@ -4,7 +4,7 @@
 ### 1.1 Objective
 > Predict customer default risk using ML models to support lending decisions.
 
-> Credit-Risk-Scoring
+Credit-Risk-Scoring
   |
   |-api
   |  
@@ -66,4 +66,16 @@ docker build -t credit-risk-api . -> to build docker image
 docker run -p 8000:8000 credit-risk-api -> to run docker image
 
 http://localhost:8000/docs -> to show the Swagger doc 
+
+### 1.4 CI/CD
+
+This projet uuses Github Actions to:
+- run tests
+- train and evaluate the model
+- generate SHAP reports
+- build the Docker image
+- deploy the API to a temporary Minikube Kuberntes cluster on Azure
+- validate the '/health' endpoint
+
+This avoids clouds costs while demonstrating a complete kubernetes CI/CD worflow.
 
