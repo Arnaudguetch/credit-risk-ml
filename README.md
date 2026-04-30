@@ -4,7 +4,7 @@
 ### 1.1 Objective
 > Predict customer default risk using ML models to support lending decisions.
 
-Credit-Risk-Scoring
+> Credit-Risk-Scoring
   |
   |-api
   |  
