@@ -21,25 +21,36 @@ jobs:
     - name: Set image tag
       run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
+    - name: Install Python pip
+      run: |
+        sudo apt update
+        sudo apt install -y python3-pip python3-venv
+
     - name: Install dependencies
       run: |
+        python3 -m venv .venv
+        . .venv/bin/activate
         python3 -m pip install --upgrade pip 
         pip3 install -r requirements.txt
 
     - name: Run tests
       run: |
+        . .venv/bin/activate
         pytest tests/
 
     - name: Train model
       run: |
+        . .venv/bin/activate
         python3 src/train.py
 
     - name: Evaluate model
       run: |
+        . .venv/bin/activate
         python3 src/evaluate.py
 
     - name: Generate SHAP report
       run: |
+        . .venv/bin/activate
         python3 src/explain.py
 
     - name: Upload model and reports
