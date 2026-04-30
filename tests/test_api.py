@@ -9,17 +9,17 @@ def test_health():
     assert response.json() == {"status": "ok"}
     
     
-def test_predit():
-    {
+def test_predict():
+    sample_input = {
         "Age": 35,
-    "Sex": "male",
-    "Job": 2,
-    "Housing": "own",
-    "Saving accounts": "little",
-    "Checking account": "little",
-    "Credit amount": 5000,
-    "Duration": 24,
-    "Purpose": "car"
+        "Sex": "male",
+        "Job": 2,
+        "Housing": "own",
+        "Saving accounts": "little",
+        "Checking account": "little",
+        "Credit amount": 5000,
+        "Duration": 24,
+        "Purpose": "car"
     }
     
     response = client.post("/predict", json=sample_input)
