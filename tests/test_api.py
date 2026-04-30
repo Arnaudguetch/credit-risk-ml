@@ -10,10 +10,16 @@ def test_health():
     
     
 def test_predit():
-    sample_input = {
-        "age": 35,
-        "credit_amount": 5000,
-        "duration": 24
+    {
+        "Age": 35,
+    "Sex": "male",
+    "Job": 2,
+    "Housing": "own",
+    "Saving accounts": "little",
+    "Checking account": "little",
+    "Credit amount": 5000,
+    "Duration": 24,
+    "Purpose": "car"
     }
     
     response = client.post("/predict", json=sample_input)
