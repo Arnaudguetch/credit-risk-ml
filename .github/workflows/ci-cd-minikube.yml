@@ -33,17 +33,11 @@ jobs:
         python3 -m pip install --upgrade pip 
         pip3 install -r requirements.txt
 
-    - name: Run tests
-      run: |
-        . .venv/bin/activate
-        export PYTHONPATH=$PWD
-        pytest tests/
-
     - name: Debug paths
       run: |
         pwd
         ls -R
-        
+
     - name: Train model
       run: |
         . .venv/bin/activate
@@ -67,6 +61,12 @@ jobs:
           models/*.pkl
           reports/*.png
           reports/*.csv
+
+    - name: Run tests
+      run: |
+        . .venv/bin/activate
+        export PYTHONPATH=$PWD
+        pytest tests/
 
     - name: Start Minikube
       run: |
