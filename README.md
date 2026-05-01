@@ -1,53 +1,53 @@
 ## 1. Projet Data Risk : Credit Risk Scoring with ML
+
 > Credit risk scoring project with ML and MLOps.
 
 ### 1.1 Objective
-> Predict customer default risk using ML models to support lending decisions.
 
-> Credit-Risk-Scoring
-  |
-  |-api
-  |  
-  |-data
-  |  |-processed
-  |  |-raw
-  |   
-  |-models
-  |
-  |-notebooks
-  |
-  |-reports
-  |
-  |-src
-  |
-  |-k8s
-  |
-  |-.github
-  |   |workflow
+> Predict customer default risk using Machine Learning models to support lending decisions.
 
+>  "This project uses Machine Learning and deploy the model with a full MLops pipeline"
+
+### 1.2 Architecture
+
+Streamlit (UI)
+    |
+FastAPI (model serving)
+    |
+ML Model (XGBoost + SHAP)
+    |
+Docker
+    |
+Kubernetes (Minikube)
+    |
+CI/CD (Github Actons)
   
 
-### 1.2 Stack
-- Python
-- scikit-learn
-- XGBoost
-- MLflow
-- FastAPI
-- Streamlit
-- Docker
-- Jenkins
-- Kubernetes
+### 1.3 Stack
 
-### 1.3 Structure
+- Python (pandas, sklearn, xgboost)
+- SHAP (interpretability)
+- FastAPI (model serving)
+- MLflow (tracking model)
+- Streamlit (frontend)
+- Docker (containerization)
+- Kubernetes (deployment)
+- Github Actions (CI/CD)
+
+### 1.4 Features
+
+- Credit risk prediction
+- Explainability with SHAP
+- REST API
+- Interactive dashboard
+- CI/CD pipeline
+- Kubernetes deployment
+
+### 1.5 run locally
+
 - `src/data_preprocessing` : preprocessing
 - `src/train.py` : training et tracking MLflow
 - `src/evaluate.py` : evaluation et graphics generation
-
-### 1.4 Set up
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
 
 > How to run the project :
 ```bash
@@ -67,7 +67,15 @@ docker run -p 8000:8000 credit-risk-api -> to run docker image
 
 http://localhost:8000/docs -> to show the Swagger doc 
 
-### 1.4 CI/CD
+>'''
+
+### 1.6 Set up
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+### 1.7 CI/CD
 
 This projet uuses Github Actions to:
 - run tests

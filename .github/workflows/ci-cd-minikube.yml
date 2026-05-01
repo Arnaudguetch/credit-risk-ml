@@ -68,9 +68,18 @@ jobs:
         export PYTHONPATH=$PWD
         pytest tests/
 
-    - name: Start Minikube
+    - name: Ensure Minikube is running
       run: |
-        minikube start --driver=docker
+        if ! minikube status | grep -q "Running"; then
+          echo "Starting Minikube..."
+          minikube start --driver=docker
+        else
+          echo "Minikube already running"
+        fi
+
+    - name: Wait for Kubernetes
+      run: |
+        kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
     - name: Build Docker image inside Minikube
       run: |
