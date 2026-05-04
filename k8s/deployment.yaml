@@ -12,6 +12,8 @@ spec:
       labels:
         app: credit-risk-api
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: credit-risk-api
         image: IMAGE_PLACEHOLDER
