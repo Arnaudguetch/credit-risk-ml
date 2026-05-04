@@ -115,6 +115,6 @@ jobs:
     - name: Test API Kubernetes
       run: |
         pkill -f "kubectl port-forward" || true
-        kubectl port-forward service/credit-risk-service 8000:8000 --address 127.0.0.1 &
+        kubectl port-forward service/credit-risk-service 8000:80 --address 127.0.0.1 &
         sleep 15
         curl -v -f http://127.0.0.1:8000/health
