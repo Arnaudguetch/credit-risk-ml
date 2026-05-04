@@ -5,22 +5,23 @@
 ### 1.1 Objective
 
 > Predict customer default risk using Machine Learning models to support lending decisions.
-
+>
 >  "This project uses Machine Learning and deploy the model with a full MLops pipeline"
+>
+> the full workflow : User -> Streamlit -> FastAPI -> Model -> Prediction 
 
 ### 1.2 Architecture
 
-Streamlit (UI)
-    |
-FastAPI (model serving)
-    |
-ML Model (XGBoost + SHAP)
-    |
-Docker
-    |
-Kubernetes (Minikube)
-    |
-CI/CD (Github Actons)
+## Architecture
+
+```mermaid
+flowchart TD
+    A[Streamlit UI] --> B[FastAPI - Model serving]
+    B --> C[ML Model - XGBoost + SHAP + MLflow]
+    C --> D[Docker]
+    D --> E[Kubernetes - Minikube]
+    E --> F[CI/CD - GitHub Actions]
+```
   
 
 ### 1.3 Stack
@@ -67,14 +68,14 @@ docker run -p 8000:8000 credit-risk-api -> to run docker image
 
 http://localhost:8000/docs -> to show the Swagger doc 
 
->'''
+
 
 ### 1.6 Set up
 ```bash
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-
+```
 ### 1.7 CI/CD
 
 This projet uuses Github Actions to:
@@ -86,4 +87,10 @@ This projet uuses Github Actions to:
 - validate the '/health' endpoint
 
 This avoids clouds costs while demonstrating a complete kubernetes CI/CD worflow.
+
+### 1.8 Documentation and description
+
+> I have used severals steps to thrive into the project by handling it throughout many ways. Follow this link: [credit-risk-ml](https://github.com/Arnaudguetch/credit-risk-ml/projects?query=is%3Aopen) to see the project name and then click on it to see the view of the plan, insights that show the issues opened and closed.
+
+> The whole project is documented and detailled through this link: [Here!](https://github.com/Arnaudguetch/credit-risk-ml/wiki/Credit%E2%80%90Risk%E2%80%90Scoring)
 
