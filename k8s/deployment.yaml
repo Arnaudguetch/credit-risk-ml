@@ -12,10 +12,12 @@ spec:
       labels:
         app: credit-risk-api
     spec:
+      imagePullSecrets:
+      - name: acr-secret
       containers:
       - name: credit-risk-api
         image: IMAGE_PLACEHOLDER
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
         readinessProbe:

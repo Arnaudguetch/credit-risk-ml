@@ -4,7 +4,7 @@ on:
   push:
     branches: [ develop ]
   pull_request:
-    branches: [ master ]
+    branches: [ develop, master ]
   workflow_dispatch:
 
 env:
@@ -81,28 +81,40 @@ jobs:
       run: |
         kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
-    - name: Build Docker image inside Minikube
+    - name: Login to Azure Container Registry
       run: |
-        eval $(minikube docker-env)
-        docker build -f Dockerfile.api -t $IMAGE_NAME:$IMAGE_TAG .
-        docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:latest 
+        az acr login --name creditriskacrguetch
+
+    - name: Build and push Docker image to ACR
+      run: |
+        ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
+        docker build -f Dockerfile.api -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
+        docker tag $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
+        docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
+        docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
 
     - name: Deploy to Kubernetes
       run: |
-        sed "s|IMAGE_PLACEHOLDER|$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
+        ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
+        sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
         kubectl apply -f k8s/service.yaml 
-        kubectl rollout status deployment/credit-risk-api --timeout=120s
+        kubectl rollout status deployment/credit-risk-api --timeout=300s
 
-    - name: Show runner info
+    - name: Debug Kubernetes on failure
+      if: failure()
       run: |
         hostname
         whoami
         docker ps
-        kubectl get nodes
-        kubectl get all
+        kubectl get pods
+        kubectl describe deployment credit-risk-api
+        kubectl get events --sort-by=.metadata.creationTimestamp | tail -40
+        kubectl get svc credit-risk-service -o yaml
+        kubectl get endpoints credit-risk-service
 
     - name: Test API Kubernetes
       run: |
-        kubectl port-forward service/credit-risk-service 8000:80 &
-        sleep 10
-        curl -f http://127.0.0.1:8000/health
+        pkill -f "kubectl port-forward" || true
+        kubectl port-forward service/credit-risk-service 8000:80 --address 127.0.0.1 &
+        sleep 15
+        curl -v -f http://127.0.0.1:8000/health
