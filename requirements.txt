@@ -10,3 +10,4 @@ fastapi==0.115.0
 uvicorn==0.30.6
 streamlit==1.38.0
 pytest==8.3.2
+httpx
