@@ -98,18 +98,23 @@ jobs:
         ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
         sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
         kubectl apply -f k8s/service.yaml 
-        kubectl rollout status deployment/credit-risk-api --timeout=120s
+        kubectl rollout status deployment/credit-risk-api --timeout=300s
 
-    - name: Show runner info
+    - name: Debug Kubernetes on failure
+      if: failure()
       run: |
         hostname
         whoami
         docker ps
-        kubectl get nodes
-        kubectl get all
+        kubectl get pods
+        kubectl describe deployment credit-risk-api
+        kubectl get events --sort-by=.metadata.creationTimestamp | tail -40
+        kubectl get svc credit-risk-service -o yaml
+        kubectl get endpoints credit-risk-service
 
     - name: Test API Kubernetes
       run: |
-        kubectl port-forward service/credit-risk-service 8000:80 &
-        sleep 10
-        curl -f http://127.0.0.1:8000/health
+        pkill -f "kubectl port-forward" || true
+        kubectl port-forward service/credit-risk-service 8000:8000 --address 127.0.0.1 &
+        sleep 15
+        curl -v -f http://127.0.0.1:8000/health
