@@ -3,118 +3,122 @@ name: CI/CD with Azure VM Minikube
 on:
   push:
     branches: [ develop ]
+
   pull_request:
     branches: [ develop, master ]
+
   workflow_dispatch:
 
 env:
   IMAGE_NAME: credit-risk-api
+  ACR_LOGIN_SERVER: creditriskacrguetch.azurecr.io
 
 jobs:
   ci-k8s:
     runs-on: [self-hosted, Linux, X64, credit-risk-scoring]
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Set image tag
-      run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+      - name: Install Python pip
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-venv
 
-    - name: Install Python pip
-      run: |
-        sudo apt update
-        sudo apt install -y python3-pip python3-venv
+      - name: Install dependencies
+        run: |
+          python3 -m venv .venv
+          . .venv/bin/activate
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-    - name: Install dependencies
-      run: |
-        python3 -m venv .venv
-        . .venv/bin/activate
-        python3 -m pip install --upgrade pip 
-        pip3 install -r requirements.txt
+      - name: Train model
+        run: |
+          . .venv/bin/activate
+          python3 src/train.py
 
-    - name: Debug paths
-      run: |
-        pwd
-        ls -R
+      - name: Evaluate model
+        run: |
+          . .venv/bin/activate
+          python3 src/evaluate.py
 
-    - name: Train model
-      run: |
-        . .venv/bin/activate
-        python3 src/train.py
+      - name: Generate SHAP report
+        run: |
+          . .venv/bin/activate
+          python3 src/explain.py
 
-    - name: Evaluate model
-      run: |
-        . .venv/bin/activate
-        python3 src/evaluate.py
+      - name: Run tests
+        run: |
+          . .venv/bin/activate
+          export PYTHONPATH=$PWD
+          pytest tests/
 
-    - name: Generate SHAP report
-      run: |
-        . .venv/bin/activate
-        python3 src/explain.py
+      - name: Upload model and reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: model-and-reports
+          path: |
+            models/*.pkl
+            reports/*.png
+            reports/*.csv
 
-    - name: Upload model and reports
-      uses: actions/upload-artifact@v4
-      with:
-        name: model-and-reports
-        path: |
-          models/*.pkl
-          reports/*.png
-          reports/*.csv
+  deploy:
+    needs: ci-k8s
+    if: github.event_name == 'push' && github.ref == 'refs/heads/develop'
+    runs-on: [self-hosted, Linux, X64, credit-risk-scoring]
 
-    - name: Run tests
-      run: |
-        . .venv/bin/activate
-        export PYTHONPATH=$PWD
-        pytest tests/
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Ensure Minikube is running
-      run: |
-        if ! minikube status | grep -q "Running"; then
-          echo "Starting Minikube..."
-          minikube start --driver=docker
-        else
-          echo "Minikube already running"
-        fi
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
-    - name: Wait for Kubernetes
-      run: |
-        kubectl wait --for=condition=Ready nodes --all --timeout=120s
+      - name: Ensure Minikube is running
+        run: |
+          if ! minikube status | grep -q "Running"; then
+            minikube start --driver=docker
+          else
+            echo "Minikube already running"
+          fi
 
-    - name: Login to Azure Container Registry
-      run: |
-        az acr login --name creditriskacrguetch
+      - name: Wait for Kubernetes
+        run: |
+          kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
-    - name: Build and push Docker image to ACR
-      run: |
-        ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
-        docker build -f Dockerfile.api -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
-        docker tag $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
-        docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
-        docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
+      - name: Login to Azure Container Registry
+        run: |
+          az acr login --name creditriskacrguetch
 
-    - name: Deploy to Kubernetes
-      run: |
-        ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
-        sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
-        kubectl apply -f k8s/service.yaml 
-        kubectl rollout status deployment/credit-risk-api --timeout=300s
+      - name: Build and push Docker image to ACR
+        run: |
+          docker build -f Dockerfile.api -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
+          docker tag $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
+          docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
 
-    - name: Debug Kubernetes on failure
-      if: failure()
-      run: |
-        hostname
-        whoami
-        docker ps
-        kubectl get pods
-        kubectl describe deployment credit-risk-api
-        kubectl get events --sort-by=.metadata.creationTimestamp | tail -40
-        kubectl get svc credit-risk-service -o yaml
-        kubectl get endpoints credit-risk-service
+      - name: Deploy to Kubernetes
+        run: |
+          sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/service.yaml
+          kubectl rollout status deployment/credit-risk-api --timeout=300s
 
-    - name: Test API Kubernetes
-      run: |
-        pkill -f "kubectl port-forward" || true
-        kubectl port-forward service/credit-risk-service 8000:80 --address 127.0.0.1 &
-        sleep 15
-        curl -v -f http://127.0.0.1:8000/health
+      - name: Test API Kubernetes
+        run: |
+          pkill -f "kubectl port-forward" || true
+          kubectl port-forward service/credit-risk-service 8000:80 --address 127.0.0.1 &
+          sleep 15
+          curl -v -f http://127.0.0.1:8000/health
+
+      - name: Debug Kubernetes on failure
+        if: failure()
+        run: |
+          hostname
+          whoami
+          docker ps
+          kubectl get pods
+          kubectl describe deployment credit-risk-api
+          kubectl get events --sort-by=.metadata.creationTimestamp | tail -40
+          kubectl get svc credit-risk-service -o yaml
+          kubectl get endpoints credit-risk-service
