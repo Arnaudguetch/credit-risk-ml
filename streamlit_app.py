@@ -7,6 +7,7 @@ DATA_PATH = "data/raw/german_credit_data.csv"
 TARGET_COL = "Risk"
 API_URL = os.getenv("API_URL", "http://localhost:8080")
 
+
 MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE", "false").lower() == "true"
 
 st.set_page_config(
