@@ -103,6 +103,7 @@ jobs:
           ls -lah
           ls -lah models || true
           ls -lah reports || true
+
       - name: Build and push Docker image to ACR
         run: |
           docker build -f Dockerfile.api -t $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG .
