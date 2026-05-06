@@ -33,6 +33,7 @@ This is how the architecture works, it splites the user interface, API logic and
 - "MLflow handle models tracting and versioning"
 - "Shap is used to interpretate model prediction. it allows to identify the values that influence the most each prediction, in order to improve transparency and the confidence in the results returned to the user"
 
+```mermaid
 flowchart TD
     U[User] <--> S[Streamlit]
 
@@ -48,6 +49,7 @@ flowchart TD
     F --> S
 
     M --> ML[MLflow]
+```
   
 
 ### 1.3 Stack
