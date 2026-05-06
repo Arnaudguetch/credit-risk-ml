@@ -9,11 +9,9 @@
 >
 >  "This project uses Machine Learning and deploy the model with a full MLops pipeline"
 >
-> the full workflow : User -> Streamlit -> FastAPI -> Model -> Prediction 
+> The full workflow : User -> Streamlit -> FastAPI -> Model -> Prediction 
 
 ### 1.2 Architecture
-
-## Architecture
 
 ```mermaid
 flowchart TD
@@ -27,19 +25,31 @@ flowchart TD
 
 >  "This project uses Machine Learning and deploy the model with a full MLops pipeline"
 
-### 1.2 Architecture
+This is how the architecture works, it splites the user interface, API logic and the prediction engine in order to facilitate the maintainability, scalability and deployment of ML models :
 
-Streamlit (UI)
-    |
-FastAPI (model serving)
-    |
-ML Model (XGBoost + SHAP)
-    |
-Docker
-    |
-Kubernetes (Minikube)
-    |
-CI/CD (Github Actons)
+- "Stramlit provides the user interface"
+- "FastAPI exposes the prediction endpoints"
+- "The ML model realises the interface"
+- "MLflow handle models tracting and versioning"
+- "Shap is used to interpretate model prediction. it allows to identify the values that influence the most each prediction, in order to improve transparency and the confidence in the results returned to the user"
+
+```mermaid
+flowchart TD
+    U[User] <--> S[Streamlit]
+
+    S --> F[FastAPI]
+    F --> M[Model]
+    M --> P[Predictions]
+
+    M --> SHAP[SHAP Explainability]
+    SHAP --> E[Explanations]
+
+    P --> F
+    E --> F
+    F --> S
+
+    M --> ML[MLflow]
+```
   
 
 ### 1.3 Stack
@@ -106,6 +116,12 @@ This projet uuses Github Actions to:
 - validate the '/health' endpoint
 
 This avoids clouds costs while demonstrating a complete kubernetes CI/CD worflow.
+
+## Deployment
+
+The API is deployed on a Kubernetes cluster running on an Azure VM.
+
+Access is provided through SSH tunneling and port-forwarding.
 
 ### 1.8 Documentation and description
 
