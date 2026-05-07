@@ -5,7 +5,7 @@ import streamlit as st
 
 DATA_PATH = "data/raw/german_credit_data.csv"
 TARGET_COL = "Risk"
-API_URL = os.getenv("API_URL", "http://localhost:8080")
+API_URL = os.getenv("API_URL", "http://credit-risk-service")
 
 
 MAINTENANCE_MODE = os.getenv("MAINTENANCE_MODE", "false").lower() == "true"
