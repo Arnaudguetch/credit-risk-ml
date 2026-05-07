@@ -11,6 +11,7 @@ on:
 
 env:
   IMAGE_NAME: credit-risk-api
+  STREAMLIT_IMAGE_NAME: credit-risk-streamlit
   ACR_LOGIN_SERVER: creditriskacrguetch.azurecr.io
 
 jobs:
@@ -111,11 +112,27 @@ jobs:
           docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
           docker push $ACR_LOGIN_SERVER/$IMAGE_NAME:latest
 
+      - name: Build and push Streamlit image to ACR
+        run: |
+          ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
+          docker build -f Dockerfile.streamlit -t $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:$IMAGE_TAG .
+          docker tag $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:$IMAGE_TAG $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:latest
+          docker push $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:$IMAGE_TAG
+          docker push $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:latest
+
       - name: Deploy to Kubernetes
         run: |
           sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
           kubectl apply -f k8s/service.yaml
           kubectl rollout status deployment/credit-risk-api --timeout=300s
+
+
+      - name: Deploy Streamlit to Kubernetes
+        run: |
+          ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
+          sed "s|STREAMLIT_IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:$IMAGE_TAG|g" k8s/streamlit-deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/streamlit-service.yaml
+          kubectl rollout status deployment/credit-risk-streamlit --timeout=300s
 
       - name: Test API Kubernetes
         run: |
