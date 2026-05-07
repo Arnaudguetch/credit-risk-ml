@@ -2,19 +2,21 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: credit-risk-streamlit
-  spec:
+spec:
   replicas: 1
   selector:
     matchLabels:
       app: credit-risk-streamlit
-    template:
-      metadata:
-        labels:
-          app: credit-risk-streamlit
-      spec:
-        containers:
-        - name: streamlit
-          image: STREAMLIT_IMAGE_PLACEHOLDER
-          imagePullPolicy: Always
-          ports:
-          - containerPort: 8501
+  template:
+    metadata:
+      labels:
+        app: credit-risk-streamlit
+    spec:
+      imagePullSecrets:
+      - name: acr-secret
+      containers:
+      - name: streamlit
+        image: STREAMLIT_IMAGE_PLACEHOLDER
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
