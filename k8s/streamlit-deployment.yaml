@@ -13,10 +13,10 @@ spec:
         app: credit-risk-streamlit
     spec:
       imagePullSecrets:
-      - name: acr-secret
+        - name: acr-secret
       containers:
-      - name: streamlit
-        image: STREAMLIT_IMAGE_PLACEHOLDER
-        imagePullPolicy: Always
-        ports:
-        - containerPort: 8501
+        - name: streamlit
+          image: STREAMLIT_IMAGE_PLACEHOLDER
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8501
