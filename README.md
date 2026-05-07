@@ -8,8 +8,7 @@
 
 >
 >  "This project uses Machine Learning and deploy the model with a full MLops pipeline"
->
-> The full workflow : User -> Streamlit -> FastAPI -> Model -> Prediction 
+
 
 ### 1.2 Architecture
 
