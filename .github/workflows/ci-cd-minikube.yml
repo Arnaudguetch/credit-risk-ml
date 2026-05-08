@@ -84,6 +84,14 @@ jobs:
             echo "Minikube already running"
           fi
 
+      - name: Wait for Kubernetes API
+        run: |
+          for i in {1..30}; do
+            kubectl get nodes && break
+            echo "Kubernetes API not ready yet... retry $i"
+            sleep 10
+          done
+
       - name: Wait for Kubernetes
         run: |
           kubectl wait --for=condition=Ready nodes --all --timeout=120s
@@ -152,3 +160,4 @@ jobs:
           kubectl get events --sort-by=.metadata.creationTimestamp | tail -40
           kubectl get svc credit-risk-service -o yaml
           kubectl get endpoints credit-risk-service
+          kubectl get ingress  
