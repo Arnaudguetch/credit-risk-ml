@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlflow-server
+  template:
+    metadata:
+      labels:
+        app: mlflow-server
+    spec:
+      containers:
+      - name: mlflow
+        image: python:3.11-slim
+        ports:
+        - containerPort: 5000
+        command: [ "/bin/sh", "-c" ]
+        args:
+        - |
+          pip install mlflow &&
+          mkdir -p /mlflow/mlruns &&
+          mlflow server \
+            --backend-store-uri sqlite:////mlflow/mlflow.db \
+            --default-artifact-root /mlflow/mlruns \
+            --host 0.0.0.0 \
+            --port 5000
+        volumeMounts:
+        - name: mlflow-data
+          mountPath: /mlflow
+      volumes:
+      - name: mlflow-data
+        hostPath:
+          path: /data/mlflow
+          type: DirectoryOrCreate
