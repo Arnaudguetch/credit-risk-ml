@@ -26,3 +26,14 @@ spec:
             name: credit-risk-streamlit-service
             port:
               number: 80
+
+  - host: mlflow.credit-risk.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mlflow-service
+            port:
+              number: 5000
