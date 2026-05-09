@@ -22,17 +22,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Python pip
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-venv
-
       - name: Install dependencies
         run: |
           python3 -m venv .venv
           . .venv/bin/activate
           python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --prefer-binary --no-cache-dir -r requirements.txt
 
       - name: Train model
         env:
