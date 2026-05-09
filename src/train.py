@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import os 
 import joblib
 import mlflow
 import mlflow.sklearn
@@ -83,6 +84,10 @@ def train_model(
             ("preprocessor", preprocessor),
             ("model", model),
         ]
+    )
+    
+    mlflow.set_tracking_uri(
+        os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
     )
 
     mlflow.set_experiment("credit-risk-scoring")
