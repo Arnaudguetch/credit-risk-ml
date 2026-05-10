@@ -20,6 +20,7 @@ spec:
         command: [ "/bin/sh", "-c" ]
         args:
         - |
+          pip install mlflow &&
           mkdir -p /mlflow/mlruns &&
           mlflow server \
             --backend-store-uri sqlite:////mlflow/mlflow.db \
