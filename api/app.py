@@ -1,12 +1,14 @@
 import joblib
 import pandas as pd
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 
+model = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.model = joblib.load("models/xgboost_pipeline.pkl")
+    global model
+    model = joblib.load("models/xgboost_pipeline.pkl")
     yield
 
 app = FastAPI(
@@ -14,18 +16,23 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-
-@app.get("/")
-def root():
-    return {"message": "Credit Risk API is running"}
-
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
+
+@app.get("/ready")
+def ready():
+    if model is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
+    return {"message": "Credit Risk API is running"}
+
+
 @app.post("/predict")
 def predict(data: dict):
-    model = app.state.model 
+    if model is None:
+        raise HTTPException(status_code=503, detail="Model not loaded")
+    
     
     df = pd.DataFrame([data])
     probability = model.predict_proba(df)[0][1]
