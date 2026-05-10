@@ -22,6 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
       - name: Install dependencies
         run: |
           python3 -m venv .venv
@@ -129,6 +130,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
+          ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
           sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
           kubectl apply -f k8s/service.yaml
           kubectl rollout status deployment/credit-risk-api --timeout=300s
