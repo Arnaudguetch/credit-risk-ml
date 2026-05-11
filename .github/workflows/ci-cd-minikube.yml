@@ -22,20 +22,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Python pip
-        run: |
-          sudo apt update
-          sudo apt install -y python3-pip python3-venv
 
       - name: Install dependencies
         run: |
           python3 -m venv .venv
           . .venv/bin/activate
           python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --prefer-binary --no-cache-dir -r requirements.txt
 
       - name: Train model
+        env:
+          MLFLOW_TRACKING_URI: http://127.0.0.1:5000
         run: |
+          pkill -f "kubectl port-forward service/mlflow-service" || true
+
+          kubectl port-forward service/mlflow-service 5000:5000 --address 127.0.0.1 > mlflow-portforward.log 2>&1 &
+
+          echo "Waiting for MLflow to be ready..."
+          for i in {1..90}; do
+            if curl -sSf http://127.0.0.1:5000 >/dev/null; then
+              echo "MLflow is ready"
+              break
+            fi
+
+            echo "Waiting MLflow... attempt $i"
+            sleep 2
+
+            if [ "$i" -eq 90 ]; then
+              echo "MLflow did not become ready"
+              cat mlflow-portforward.log
+              exit 1
+            fi
+          done
+
           . .venv/bin/activate
           python3 src/train.py
 
@@ -130,6 +149,7 @@ jobs:
 
       - name: Deploy to Kubernetes
         run: |
+          ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
           sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
           kubectl apply -f k8s/service.yaml
           kubectl rollout status deployment/credit-risk-api --timeout=300s
