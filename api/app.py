@@ -13,7 +13,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="Credit Risk Scoring API",
-    lifespan=lifespan
+    lifespan=lifespan,
+    root_path=""
 )
 
 @app.get("/health")
