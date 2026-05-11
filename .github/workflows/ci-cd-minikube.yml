@@ -34,7 +34,7 @@ jobs:
         env:
           MLFLOW_TRACKING_URI: http://127.0.0.1:5000
         run: |
-          ppkill -f "kubectl port-forward" || true
+          pkill -f "kubectl port-forward" || true
 
           kubectl port-forward service/mlflow-service 5000:5000 --address 127.0.0.1 > mlflow.log 2>&1 &
           PF_PID=$!
@@ -42,14 +42,16 @@ jobs:
           echo "Waiting for MLflow..."
 
           for i in {1..90}; do
+            # vrai endpoint MLflow (important)
             if curl -sSf http://127.0.0.1:5000/api/2.0/mlflow/experiments/list >/dev/null; then
-              echo "MLflow ready"
+              echo "MLflow is ready"
               break
             fi
 
             echo "waiting MLflow... $i"
             sleep 2
 
+            # si port-forward crash
             if ! kill -0 $PF_PID 2>/dev/null; then
               echo "port-forward died"
               cat mlflow.log
