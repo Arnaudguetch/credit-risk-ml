@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import os
 
+import os
 import joblib
 import mlflow
 import mlflow.sklearn
