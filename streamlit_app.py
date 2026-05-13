@@ -18,15 +18,34 @@ st.set_page_config(
 st.markdown("""
 <style>
     .main {
-        background-color: #f7f9fc;
+        background: linear-gradient(
+            135deg,
+            #eef2ff 0%,
+            #f8fafc 40%,
+            #e0f2fe 100%
+        );
+    }
+    
+    [data-testid="stAppViewContainer"] {
+        background: linear-gradient(
+            135deg,
+            #eef2ff 0%,
+            #f8fafc 40%,
+            #e0f2fe 100%
+        );
+    }
+    
+    [data-testid="stHeader"] {
+        background: rgba(255,255,255,0);
     }
 
     .title {
         text-align: center;
-        font-size: 42px;
+        font-size: 46px;
         font-weight: 800;
-        color: #1f3b73;
-        margin-bottom: 5px;
+        color: #1e3a8a;
+        margin-bottom: 8px;
+        letter-spacing: -1px;
     }
 
     .subtitle {
@@ -37,11 +56,19 @@ st.markdown("""
     }
 
     .card {
-        background: white;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
         padding: 25px;
-        border-radius: 18px;
-        box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.3);
         margin-bottom: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 14px 35px rgba(0,0,0,0.12);
     }
 
     .success-card {
@@ -67,21 +94,79 @@ st.markdown("""
         border-radius: 20px;
         box-shadow: 0 6px 20px rgba(0,0,0,0.08);
     }
+    
+    [data-testid="metric-container"] {
+        background: white;
+        border-radius: 16px;
+        padding: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #e5e7eb;
+    }
+    
+    [data-testid="metric-container"]:hover {
+        transform: translateY(-2px);
+        transition: 0.2s ease;
+    }
+    
+    [data-testid="stHeader"] {
+        background: rgba(255,255,255,0.6);
+        backdrop-filter: blur(10px);
+    }
+    
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
 
     div.stButton > button {
         width: 100%;
-        background-color: #1f3b73;
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
         color: white;
-        border-radius: 12px;
-        padding: 12px;
+        border-radius: 14px;
+        padding: 14px;
         font-weight: 700;
         border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 18px rgba(37,99,235,0.25);
     }
 
     div.stButton > button:hover {
-        background-color: #3157a4;
-        color: white;
+        transform: translateY(-2px);
+        background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+        box-shadow: 0 10px 24px rgba(37,99,235,0.35);
     }
+    
+    div[data-baseweb="select"] > div {
+        border-radius: 12px !important;
+        border: 1px solid #dbe4ff !important;
+    }
+
+    input {
+        border-radius: 12px !important;
+    }
+
+    .stSlider > div[data-baseweb="slider"] {
+        padding-top: 10px;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .card, .success-card, .danger-card {
+        animation: fadeIn 0.4s ease-in-out;
+    }
+    
+    div[data-baseweb="base-input"] {
+        border-radius: 12px !important;
+    }
+    
 </style>
 """, unsafe_allow_html=True)
 
