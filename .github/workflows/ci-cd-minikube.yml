@@ -124,6 +124,19 @@ jobs:
           docker push $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:$IMAGE_TAG
           docker push $ACR_LOGIN_SERVER/$STREAMLIT_IMAGE_NAME:latest
 
+
+      - name: Build and push MLflow image to ACR
+        run: |
+          ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
+          docker build -f Dockerfile.mlflow \
+            -t $ACR_LOGIN_SERVER/mlflow:$IMAGE_TAG .
+
+          docker tag $ACR_LOGIN_SERVER/mlflow:$IMAGE_TAG \
+            $ACR_LOGIN_SERVER/mlflow:latest
+
+          docker push $ACR_LOGIN_SERVER/mlflow:$IMAGE_TAG
+          docker push $ACR_LOGIN_SERVER/mlflow:latest
+
       - name: Deploy to Kubernetes
         run: |
           ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
@@ -139,12 +152,26 @@ jobs:
           kubectl apply -f k8s/streamlit-service.yaml
           kubectl rollout status deployment/credit-risk-streamlit --timeout=300s
 
+
+      - name: Deploy MLflow to Kubernetes
+        run: |
+          ACR_LOGIN_SERVER=creditriskacrguetch.azurecr.io
+
+          sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/mlflow:$IMAGE_TAG|g" k8s/mlflow-deployment.yaml | kubectl apply -f -
+
+          kubectl apply -f k8s/mlflow-service.yaml
+
+          kubectl rollout status deployment/mlflow-server --timeout=300s
+
       - name: Test API Kubernetes
         run: |
           pkill -f "kubectl port-forward" || true
           kubectl port-forward service/credit-risk-service 8000:80 --address 127.0.0.1 &
           sleep 15
           curl -v -f http://127.0.0.1:8000/health
+
+      - name: Set kubectl context check
+        run: kubectl cluster-info
 
       - name: Debug Kubernetes on failure
         if: failure()
@@ -158,3 +185,5 @@ jobs:
           kubectl get svc credit-risk-service -o yaml
           kubectl get endpoints credit-risk-service
           kubectl get ingress  
+
+      
