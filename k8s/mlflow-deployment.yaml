@@ -24,6 +24,4 @@ spec:
 
       volumes:
       - name: mlflow-data
-        hostPath:
-          path: /data/mlflow
-          type: DirectoryOrCreate
+        emptyDir: {}
