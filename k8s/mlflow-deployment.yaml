@@ -17,9 +17,11 @@ spec:
         image: creditriskacrguetch.azurecr.io/mlflow:latest
         ports:
         - containerPort: 5000
+
         volumeMounts:
         - name: mlflow-data
           mountPath: /mlflow
+
       volumes:
       - name: mlflow-data
         hostPath:
