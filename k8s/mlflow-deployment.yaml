@@ -14,19 +14,9 @@ spec:
     spec:
       containers:
       - name: mlflow
-        image: python:3.11-slim
+        image: creditriskacrguetch.azurecr.io/mlflow:latest
         ports:
         - containerPort: 5000
-        command: [ "/bin/sh", "-c" ]
-        args:
-        - |
-          pip install mlflow &&
-          mkdir -p /mlflow/mlruns &&
-          mlflow server \
-            --backend-store-uri sqlite:////mlflow/mlflow.db \
-            --default-artifact-root file:///mlflow/mlruns \
-            --host 0.0.0.0 \
-            --port 5000
         volumeMounts:
         - name: mlflow-data
           mountPath: /mlflow

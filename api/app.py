@@ -3,6 +3,7 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 
+
 model = None
 
 @asynccontextmanager
@@ -16,6 +17,7 @@ app = FastAPI(
     lifespan=lifespan,
     root_path=""
 )
+
 
 @app.get("/health")
 def health():
