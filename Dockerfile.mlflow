@@ -1,13 +1,10 @@
-FROM python:3.11-slim 
 
-RUN pip install --no-cache-dir mlflow 
+FROM python:3.11-slim
 
-RUN mkdir -p /mlflow/mlruns 
+RUN pip install --no-cache-dir mlflow
 
-EXPOSE 5000 
+RUN mkdir -p /mlflow/mlruns
 
-CMD ["mlflow", "server", \
-"--backend-store-uri", "sqlite:////mlflow/mlflow.db", \
-"--default-artifact-root", "file:///mlflow/mlruns", \
-"--host", "0.0.0.0", \
-"--port", "5000"] 
+EXPOSE 5000
+
+CMD ["mlflow", "server", "--backend-store-uri", "sqlite:////mlflow/mlflow.db", "--default-artifact-root", "file:///mlflow/mlruns", "--host", "0.0.0.0", "--port", "5000"]
