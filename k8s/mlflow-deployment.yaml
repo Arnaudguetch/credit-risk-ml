@@ -13,22 +13,23 @@ spec:
         app: mlflow-server
     spec:
       containers:
-      - name: mlflow
-        image: creditriskacrguetch.azurecr.io/mlflow:latest
-        ports:
-        - containerPort: 5000
+        - name: mlflow
+          image: creditriskacrguetch.azurecr.io/mlflow:latest
 
-        resources:
-          requests:
-            memory: "256Mi"
-            cpu: "250m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
 
-        volumeMounts:
-        - name: mlflow-data
-          mountPath: /mlflow
+          ports:
+            - containerPort: 5000
+
+          volumeMounts:
+            - name: mlflow-data
+              mountPath: /mlflow
 
       volumes:
       - name: mlflow-data
