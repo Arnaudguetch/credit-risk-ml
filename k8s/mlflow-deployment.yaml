@@ -19,7 +19,7 @@ spec:
         resources:
           requests:
             cpu: "250m"
-            memory: "2Gi"
+            memory: "512Mi"
           limits:
             cpu: "1"
             memory: "2Gi"
@@ -30,7 +30,6 @@ spec:
         volumeMounts:
         - name: mlflow-data
           mountPath: /mlflow
-
       volumes:
       - name: mlflow-data
         emptyDir: {}
