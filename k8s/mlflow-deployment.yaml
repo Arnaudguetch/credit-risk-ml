@@ -15,16 +15,17 @@ spec:
       containers:
       - name: mlflow
         image: creditriskacrguetch.azurecr.io/mlflow:latest
-        ports:
-        - containerPort: 5000
 
         resources:
           requests:
-            memory: "512Mi"
             cpu: "250m"
+            memory: "512Mi"
           limits:
-            memory: "2Gi"
             cpu: "1"
+            memory: "2Gi"
+
+        ports:
+        - containerPort: 5000
 
         volumeMounts:
         - name: mlflow-data
