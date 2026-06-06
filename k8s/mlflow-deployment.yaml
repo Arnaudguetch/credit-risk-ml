@@ -31,9 +31,6 @@ spec:
         - name: mlflow-data
           mountPath: /mlflow
 
-        volumeMounts:
-        - name: mlflow-data
-          mountPath: /mlflow
       volumes:
       - name: mlflow-data
         emptyDir: {}
