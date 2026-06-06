@@ -36,4 +36,5 @@ spec:
           mountPath: /mlflow
       volumes:
       - name: mlflow-data
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: mlflow-pvc
