@@ -33,4 +33,5 @@ spec:
 
       volumes:
       - name: mlflow-data
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: mlflow-pvc

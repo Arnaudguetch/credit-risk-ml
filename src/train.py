@@ -87,7 +87,7 @@ def train_model(
     )
     
     mlflow.set_tracking_uri(
-        os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
+        os.getenv("MLFLOW_TRACKING_URI", "http://mlflow.credit-risk.local:8080")
     )
 
     mlflow.set_experiment("credit-risk-scoring")
