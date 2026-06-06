@@ -14,29 +14,43 @@ spec:
     spec:
       imagePullSecrets:
       - name: acr-secret
+
       containers:
       - name: credit-risk-api
         image: IMAGE_PLACEHOLDER
         imagePullPolicy: Always
+
         ports:
         - containerPort: 8000
+
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
         startupProbe:
           httpGet:
             path: /health
             port: 8000
           failureThreshold: 30
           periodSeconds: 5
+
         readinessProbe:
           httpGet:
             path: /health
             port: 8000
-          initialDelaySeconds: 10
+          initialDelaySeconds: 5
           periodSeconds: 5
           timeoutSeconds: 2
-          failureThreshold: 6
+          failureThreshold: 3
+
         livenessProbe:
           httpGet:
             path: /health
             port: 8000
-          initialDelaySeconds: 30
+          initialDelaySeconds: 20
           periodSeconds: 10
+          failureThreshold: 3
