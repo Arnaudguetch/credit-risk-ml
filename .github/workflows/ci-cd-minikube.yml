@@ -133,8 +133,8 @@ jobs:
 
       - name: Deploy API
         run: |
-          sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/api-deployment.yaml | kubectl apply -f -
-          kubectl apply -f k8s/api-service.yaml
+          sed "s|IMAGE_PLACEHOLDER|$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG|g" k8s/deployment.yaml | kubectl apply -f -
+          kubectl apply -f k8s/service.yaml
           kubectl rollout status deployment/credit-risk-api --timeout=300s
 
       - name: Deploy Streamlit
