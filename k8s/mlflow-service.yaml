@@ -5,7 +5,9 @@ metadata:
 spec:
   selector:
     app: mlflow-server
+
   ports:
   - port: 80
     targetPort: 5000
+
   type: ClusterIP

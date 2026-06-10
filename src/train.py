@@ -90,12 +90,14 @@ def train_model(
         os.getenv("MLFLOW_TRACKING_URI", "file:./mlruns")
     )
 
-    mlflow.set_experiment("credit-risk-scoring")
+    mlflow.set_experiment(os.getenv("MLFLOW_EXPERIMENT", "credit-risk-scoring"))
 
     with mlflow.start_run(run_name=model_name):
         mlflow.log_param("model_name", model_name)
         mlflow.log_param("test_size", 0.2)
         mlflow.log_param("random_state", random_state)
+        mlflow.set_tag("model_type", model_name)
+        mlflow.set_tag("framework", "sklearn+xgboost")
 
         pipeline.fit(X_train, y_train)
 
@@ -119,6 +121,7 @@ def train_model(
         mlflow.sklearn.log_model(
             sk_model=pipeline,
             artifact_path="model",
+            registered_model_name=None
         )
 
         print(f"Model saved to: {model_path}")

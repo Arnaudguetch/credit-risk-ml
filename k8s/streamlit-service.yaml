@@ -5,7 +5,10 @@ metadata:
 spec:
   selector:
     app: credit-risk-streamlit
+
   ports:
   - port: 80
     targetPort: 8501
+    protocol: TCP
+
   type: ClusterIP
