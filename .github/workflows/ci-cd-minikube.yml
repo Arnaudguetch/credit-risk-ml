@@ -94,7 +94,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ml-artifacts
+          name: model-and-reports
           path: .
 
       - name: Check downloaded files
