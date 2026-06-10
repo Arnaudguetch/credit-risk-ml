@@ -2,8 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: credit-risk-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
 spec:
   ingressClassName: nginx
+
   rules:
   - host: api.credit-risk.local
     http:
@@ -35,5 +39,16 @@ spec:
         backend:
           service:
             name: mlflow-service
+            port:
+              number: 80
+
+  - host: grafana.credit-risk.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: monitoring-grafana
             port:
               number: 80

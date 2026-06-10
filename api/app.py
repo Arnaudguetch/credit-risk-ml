@@ -1,21 +1,29 @@
+import os
 import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
 
+MODEL_PATH = os.getenv("MODEL_PATH", "models/xgboost_pipeline.pkl")
 
 model = None
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global model
-    model = joblib.load("models/xgboost_pipeline.pkl")
+    try:
+        model = joblib.load(MODEL_PATH)
+    except Exception as e:
+        print(f"Model loading failed: {e}")
+        model = None
     yield
+
 
 app = FastAPI(
     title="Credit Risk Scoring API",
-    lifespan=lifespan,
-    root_path=""
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 
@@ -27,22 +35,24 @@ def health():
 @app.get("/ready")
 def ready():
     if model is None:
-        raise HTTPException(status_code=503, detail="Model not loaded")
-    return {"message": "Credit Risk API is running"}
+        raise HTTPException(status_code=503, detail="Model not ready")
+    return {"status": "ready"}
 
 
 @app.post("/predict")
-def predict(data: dict):
+def predict(payload: dict):
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
-    
-    
-    df = pd.DataFrame([data])
-    probability = model.predict_proba(df)[0][1]
-    prediction = int(probability >= 0.5)
-    
-    return {
-        "default_probability": float(probability),
-        "prediction": prediction,
-        "risk_label": "bad" if prediction == 1 else "good",
-    }
+
+    try:
+        df = pd.DataFrame([payload])
+        proba = model.predict_proba(df)[0][1]
+
+        return {
+            "default_probability": float(proba),
+            "prediction": int(proba >= 0.5),
+            "risk_label": "bad" if proba >= 0.5 else "good"
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

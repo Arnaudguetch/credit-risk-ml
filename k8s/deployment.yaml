@@ -7,21 +7,24 @@ spec:
   selector:
     matchLabels:
       app: credit-risk-api
+
   template:
     metadata:
       labels:
         app: credit-risk-api
-    spec:
-      imagePullSecrets:
-      - name: acr-secret
 
+    spec:
       containers:
       - name: credit-risk-api
-        image: IMAGE_PLACEHOLDER
+        image: acrguetchcreditrisk01.azurecr.io/risk-api:latest
         imagePullPolicy: Always
 
         ports:
         - containerPort: 8000
+
+        env:
+        - name: MODEL_PATH
+          value: "models/xgboost_pipeline.pkl"
 
         resources:
           requests:
@@ -30,6 +33,10 @@ spec:
           limits:
             cpu: "500m"
             memory: "512Mi"
+
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
 
         startupProbe:
           httpGet:
@@ -40,17 +47,25 @@ spec:
 
         readinessProbe:
           httpGet:
-            path: /health
+            path: /ready
             port: 8000
-          initialDelaySeconds: 5
           periodSeconds: 5
-          timeoutSeconds: 2
-          failureThreshold: 3
 
         livenessProbe:
           httpGet:
             path: /health
             port: 8000
-          initialDelaySeconds: 20
           periodSeconds: 10
-          failureThreshold: 3
+
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets"
+          readOnly: true
+
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: kv-credit-risk
