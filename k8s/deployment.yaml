@@ -68,4 +68,4 @@ spec:
           driver: secrets-store.csi.k8s.io
           readOnly: true
           volumeAttributes:
-            secretProviderClass: kv-credit-risk
+            secretProviderClass: kv-secrets
