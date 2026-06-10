@@ -9,6 +9,10 @@ on:
 
   workflow_dispatch:
 
+permissions:
+  id-token: write
+  contents: read
+
 env:
   IMAGE_NAME: credit-risk-api
   STREAMLIT_IMAGE_NAME: credit-risk-streamlit
@@ -78,6 +82,7 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
       - name: Get AKS credentials
         run: |
           az aks get-credentials \
