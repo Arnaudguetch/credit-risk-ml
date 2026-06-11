@@ -17,7 +17,7 @@ env:
   IMAGE_NAME: credit-risk-api
   STREAMLIT_IMAGE_NAME: credit-risk-streamlit
   MLFLOW_IMAGE_NAME: mlflow
-  ACR_LOGIN_SERVER: creditriskacrguetch.azurecr.io
+  ACR_LOGIN_SERVER: acrguetchcreditrisk01.azurecr.io
   RESOURCE_GROUP: credit-risk-scoring
   AKS_CLUSTER: aks-mlops
 
