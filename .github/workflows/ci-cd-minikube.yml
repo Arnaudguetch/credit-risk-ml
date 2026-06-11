@@ -76,6 +76,12 @@ jobs:
       - name: Set image tag
         run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
       - name: Azure Login
         uses: azure/login@v2
         with:
@@ -89,7 +95,7 @@ jobs:
             --overwrite-existing
 
       - name: Login ACR
-        run: az acr login --name creditriskacrguetch
+        run: az acr login --name acrguetchcreditrisk01
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
