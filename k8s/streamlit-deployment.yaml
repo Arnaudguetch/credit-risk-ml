@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: streamlit
-        image: acrguetchcreditrisk01.azurecr.io/streamlit-app:latest
+        image: STREAMLIT_IMAGE_PLACEHOLDER
         imagePullPolicy: Always
 
         ports:
