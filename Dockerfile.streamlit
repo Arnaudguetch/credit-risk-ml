@@ -2,14 +2,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-RUN useradd -m appuser
-USER appuser
+RUN addgroup --system appgroup && \
+    adduser --system --uid 1001 --ingroup appgroup appuser
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir --user -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY streamlit_app.py .
 COPY data/ data/
+
+RUN chown -R 1001:1001 /app
+
+USER 1001
 
 EXPOSE 8501
 
