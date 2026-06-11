@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: credit-risk-api
-        image: acrguetchcreditrisk01.azurecr.io/risk-api:latest
+        image: acrguetchcreditrisk01.azurecr.io/credit-risk-api:latest
         imagePullPolicy: Always
 
         ports:
