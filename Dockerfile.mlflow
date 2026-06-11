@@ -2,13 +2,24 @@ FROM python:3.11-slim
 
 WORKDIR /mlflow
 
-RUN pip install --no-cache-dir mlflow
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir mlflow psycopg2-binary
 
-RUN mkdir -p /mlflow/mlruns
+RUN addgroup --system appgroup && \
+    adduser --system --uid 1001 --ingroup appgroup appuser
+
+RUN mkdir -p /mlflow/mlruns && \
+    chown -R 1001:1001 /mlflow
+
+USER 1001
 
 EXPOSE 5000
 
-ENV MLFLOW_BACKEND_STORE_URI=sqlite:////mlflow/mlflow.db
+ENV MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db
 ENV MLFLOW_DEFAULT_ARTIFACT_ROOT=file:///mlflow/mlruns
 
-CMD ["mlflow", "server", "--host", "0.0.0.0", "--port", "5000", "--backend-store-uri", "sqlite:////mlflow/mlflow.db", "--default-artifact-root", "file:///mlflow/mlruns"]
+CMD ["mlflow", "server", \
+"--host", "0.0.0.0", \
+"--port", "5000", \
+"--backend-store-uri", "sqlite:///mlflow.db", \
+"--default-artifact-root", "file:///mlflow/mlruns"]
