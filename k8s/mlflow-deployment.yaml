@@ -4,36 +4,66 @@ metadata:
   name: mlflow-server
 spec:
   replicas: 1
+
   selector:
     matchLabels:
       app: mlflow-server
+
   template:
     metadata:
       labels:
         app: mlflow-server
+
     spec:
       containers:
       - name: mlflow
-        image: creditriskacrguetch.azurecr.io/mlflow:latest
-
-        resources:
-          requests:
-            cpu: "250m"
-            memory: "2Gi"
-          limits:
-            cpu: "1"
-            memory: "2Gi"
+        image: acrguetchcreditrisk01.azurecr.io/mlflow:latest
+        imagePullPolicy: Always
 
         ports:
         - containerPort: 5000
 
-        volumeMounts:
-        - name: mlflow-data
-          mountPath: /mlflow
+        env:
+        - name: MLFLOW_TRACKING_URI
+          value: "sqlite:////mlflow/mlflow.db"
+
+        - name: MLFLOW_DEFAULT_ARTIFACT_ROOT
+          value: "file:/mlflow/mlruns"
 
         volumeMounts:
         - name: mlflow-data
           mountPath: /mlflow
+
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "250m"
+          limits:
+            memory: "3Gi"
+            cpu: "1"
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 60
+          periodSeconds: 10
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 120
+          periodSeconds: 20
+
+        startupProbe:
+          httpGet:
+            path: /
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          failureThreshold: 30
+
       volumes:
       - name: mlflow-data
         persistentVolumeClaim:

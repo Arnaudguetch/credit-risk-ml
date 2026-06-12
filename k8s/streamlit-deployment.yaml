@@ -4,19 +4,60 @@ metadata:
   name: credit-risk-streamlit
 spec:
   replicas: 1
+
   selector:
     matchLabels:
       app: credit-risk-streamlit
+
   template:
     metadata:
       labels:
         app: credit-risk-streamlit
+
     spec:
-      imagePullSecrets:
-        - name: acr-secret
       containers:
-        - name: streamlit
-          image: STREAMLIT_IMAGE_PLACEHOLDER
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8501
+      - name: streamlit
+        image: STREAMLIT_IMAGE_PLACEHOLDER
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 8501
+
+        env:
+        - name: DB_PASSWORD_PATH
+          value: "/mnt/secrets/db-password"
+
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/mnt/secrets"
+          readOnly: true
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8501
+          initialDelaySeconds: 10
+          periodSeconds: 5
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8501
+          initialDelaySeconds: 30
+          periodSeconds: 10
+
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: kv-secrets

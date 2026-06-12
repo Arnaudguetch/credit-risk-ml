@@ -1,16 +1,23 @@
-FROM python:3.11-slim 
+FROM python:3.11-slim
 
-WORKDIR /app 
+WORKDIR /app
+
+RUN addgroup --system appgroup && \
+    adduser --system --uid 1001 --ingroup appgroup appuser
 
 COPY requirements.txt .
-
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY api/ api/
 COPY models/ models/
 
+RUN chown -R 1001:1001 /app
+
+USER 1001
+
 EXPOSE 8000
 
-CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000"]
+ENV PYTHONUNBUFFERED=1
 
- 
+CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
