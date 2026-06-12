@@ -25,10 +25,13 @@ spec:
 
         env:
         - name: MLFLOW_TRACKING_URI
+          value: "file:/mlflow/mlruns"
+
+        - name: BACKEND_STORE_URI
           value: "sqlite:////mlflow/mlflow.db"
 
-        - name: MLFLOW_DEFAULT_ARTIFACT_ROOT
-          value: "file:/mlflow/mlruns"
+        - name: MLFLOW_HOST
+          value: "0.0.0.0"
 
         volumeMounts:
         - name: mlflow-data
