@@ -29,7 +29,7 @@ spec:
         - --default-artifact-root
         - file:///mlflow/mlruns
         - --allowed-hosts
-        - "*"
+        - "mlflow.credit-risk.local,52.146.82.131"
         imagePullPolicy: Always
 
         ports:
