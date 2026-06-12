@@ -18,6 +18,18 @@ spec:
       containers:
       - name: mlflow
         image: acrguetchcreditrisk01.azurecr.io/mlflow:latest
+        args:
+        - server
+        - --host
+        - 0.0.0.0
+        - --port
+        - "5000"
+        - --backend-store-uri
+        - sqlite:////mlflow/mlflow.db
+        - --default-artifact-root
+        - file:///mlflow/mlruns
+        - --allowed-hosts
+        - "mlflow.credit-risk.local,52.146.82.131"
         imagePullPolicy: Always
 
         ports:
