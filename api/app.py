@@ -21,7 +21,7 @@ class CreditRequest(BaseModel):
     model_config = {
         "populate_by_name": True
     }
-
+    
 MODEL_PATH = os.getenv("MODEL_PATH", "models/xgboost_pipeline.pkl")
 
 model = None
@@ -32,9 +32,11 @@ async def lifespan(app: FastAPI):
     global model
     try:
         model = joblib.load(MODEL_PATH)
+        print("Model loaded successfully")
     except Exception as e:
         print(f"Model loading failed: {e}")
         model = None
+
     yield
 
 
@@ -63,7 +65,7 @@ def predict(payload: CreditRequest):
         raise HTTPException(status_code=503, detail="Model not loaded")
 
     try:
-        df = pd.DataFrame([payload.mode_dump(by_alias=True)])
+        df = pd.DataFrame([payload.model_dump(by_alias=True)]) 
         proba = model.predict_proba(df)[0][1]
 
         return {
