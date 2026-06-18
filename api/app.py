@@ -3,6 +3,24 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from contextlib import asynccontextmanager
+from pydantic import BaseModel, Field
+
+class CreditRequest(BaseModel):
+    Age: int
+    Sex: str
+    Job: int
+    Housing: str
+
+    Saving_accounts: str = Field(alias="Saving accounts")
+    Checking_account: str = Field(alias="Checking account")
+    Credit_amount: float = Field(alias="Credit amount")
+
+    Duration: int
+    Purpose: str
+
+    model_config = {
+        "populate_by_name": True
+    }
 
 MODEL_PATH = os.getenv("MODEL_PATH", "models/xgboost_pipeline.pkl")
 
@@ -40,12 +58,12 @@ def ready():
 
 
 @app.post("/predict")
-def predict(payload: dict):
+def predict(payload: CreditRequest):
     if model is None:
         raise HTTPException(status_code=503, detail="Model not loaded")
 
     try:
-        df = pd.DataFrame([payload])
+        df = pd.DataFrame([payload.mode_dump(by_alias=True)])
         proba = model.predict_proba(df)[0][1]
 
         return {
