@@ -2,6 +2,7 @@ import os
 import requests
 import pandas as pd
 import streamlit as st
+from shared_schema import CreditRequest
 
 DATA_PATH = "data/raw/german_credit_data.csv"
 TARGET_COL = "Risk"
@@ -275,9 +276,21 @@ def app():
     if st.button("🔍 Prédire le risque"):
         try:
             with st.spinner("Analyse du profil client en cours..."):
+                payload = CreditRequest(
+                    age=user_input["age"],
+                    sex=user_input["sex"],
+                    job=user_input["job"],
+                    housing=user_input["housing"],
+                    saving_accounts=user_input["saving_accounts"],
+                    checking_account=user_input["checking_account"],
+                    credit_amount=user_input["credit_amount"],
+                    duration=user_input["duration"],
+                    purpose=user_input["purpose"],
+                )
+                
                 response = requests.post(
                     f"{API_URL}/predict",
-                    json=user_input,
+                    json=payload.model_dump(),
                     timeout=10,
                 )
 

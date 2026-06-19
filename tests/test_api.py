@@ -12,19 +12,22 @@ def test_health():
 
 def test_predict():
     sample_input = {
-        "Age": 35,
-        "Sex": "male",
-        "Job": 2,
-        "Housing": "own",
-        "Saving accounts": "little",
-        "Checking account": "little",
-        "Credit amount": 5000,
-        "Duration": 24,
-        "Purpose": "car"
+        "age": 35,
+        "sex": "male",
+        "job": 2,
+        "housing": "own",
+        "saving_accounts": "little",
+        "checking_account": "little",
+        "credit_amount": 5000,
+        "duration": 24,
+        "purpose": "car"
     }
 
     with TestClient(app) as client:
         response = client.post("/predict", json=sample_input)
+        
+        print(response.status_code)
+        print(response.json()) 
 
     assert response.status_code == 200
 
