@@ -26,8 +26,8 @@ def load_data(csv_path: str | Path) -> pd.DataFrame:
         .str.replace(" ", "_")
     )
         
-    if "Unnamed: 0" in df.columns:
-        df = df.drop(columns=["Unnamed: 0"])
+    if "Unnamed:_0" in df.columns:
+        df = df.drop(columns=["Unnamed:_0"], errors="ignore")
     return df
 
 def split_features_target(

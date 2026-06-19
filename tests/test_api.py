@@ -12,7 +12,6 @@ def test_health():
 
 def test_predict():
     sample_input = {
-        "unnamed:_0": 0,
         "age": 35,
         "sex": "male",
         "job": 2,
