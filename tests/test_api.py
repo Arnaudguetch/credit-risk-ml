@@ -1,3 +1,15 @@
+from fastapi.testclient import TestClient
+from api.app import app
+
+
+def test_health():
+    with TestClient(app) as client:
+        response = client.get("/health")
+
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
 def test_predict():
     sample_input = {
         "age": 35,
@@ -17,7 +29,6 @@ def test_predict():
     assert response.status_code == 200
 
     data = response.json()
-
     assert "default_probability" in data
     assert "prediction" in data
     assert "risk_label" in data
