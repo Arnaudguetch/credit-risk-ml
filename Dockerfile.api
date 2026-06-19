@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY api/ api/
 COPY models/ models/
+COPY shared_schema/ shared_schema/
+
+ENV PYTHONPATH=/app
 
 RUN chown -R 1001:1001 /app
 
