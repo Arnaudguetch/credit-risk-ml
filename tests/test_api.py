@@ -16,9 +16,9 @@ def test_predict():
         "sex": "male",
         "job": 2,
         "housing": "own",
-        "saving_accounts": "little",
-        "checking_account": "little",
-        "credit_amount": 5000,
+        "saving accounts": "little",
+        "checking account": "little",
+        "credit amount": 5000,
         "duration": 24,
         "purpose": "car"
     }
