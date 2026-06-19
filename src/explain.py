@@ -14,7 +14,7 @@ def explain_model():
     pipeline = joblib.load(MODEL_PATH)
     
     df = load_data(DATA_PATH)
-    X, y = split_features_target(df, target_col="Risk")
+    X, y = split_features_target(df, target_col="risk")
     
     _, X_test, _, _ = train_test_split(
         X, 

@@ -86,7 +86,7 @@ if __name__ == "__main__":
     raw_path = Path("data/raw/german_credit_data.csv")
     df = load_data(raw_path)
     print(df.columns)
-    X,y = split_features_target(df, target_col="Risk")
+    X,y = split_features_target(df, target_col="risk")
     preprocessor = build_preprocessor(X)
     save_object(preprocessor, "models/preprocessor.pkl")
     print("Preprocessor saved to models/preprocessor.pkl")
