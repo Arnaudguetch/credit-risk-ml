@@ -55,7 +55,7 @@ def plot_feature_importance(pipeline, output_path: str):
 def evaluate_saved_model(
     model_path: str | Path,
     data_path: str | Path,
-    target_col: str = "Risk",
+    target_col: str = "risk",
     random_state: int = 42,
 ) -> None:
     reports_dir = Path("reports")
@@ -94,7 +94,7 @@ def evaluate_saved_model(
     
     plt.figure()
     ConfusionMatrixDisplay.from_predictions(y_test, y_pred)
-    plt.title("Confusion Maxtrix")
+    plt.title("Confusion Matrix")
     plt.savefig(reports_dir / "confusion_matrix.png", bbox_inches="tight") 
     plt.close()
     
@@ -109,5 +109,5 @@ if __name__ == "__main__":
     evaluate_saved_model(
         model_path="models/xgboost_pipeline.pkl",
         data_path="data/raw/german_credit_data.csv",
-        target_col="Risk",
+        target_col="risk",
     )
