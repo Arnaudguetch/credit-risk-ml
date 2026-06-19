@@ -37,7 +37,7 @@ def compute_metrics(y_true, y_pred, y_prob) -> dict:
 
 def train_model(
     data_path: str | Path,
-    target_col: str = "Risk",
+    target_col: str = "risk",
     model_name: str = "xgboost",
     random_state: int = 42,
 ) -> None:
@@ -133,6 +133,6 @@ def train_model(
 if __name__ == "__main__":
     train_model(
         data_path="data/raw/german_credit_data.csv",
-        target_col="Risk",
+        target_col="risk",
         model_name="xgboost",
     )
