@@ -19,7 +19,12 @@ def load_data(csv_path: str | Path) -> pd.DataFrame:
         raise FileNotFoundError(f"Dataset not found at: {csv_path}")
     df = pd.read_csv(csv_path)
     
-    df.columns = df.columns.str.lower()
+    df.columns = (
+        df.columns
+        .str.strip()
+        .str.lower()
+        .str.replace(" ", "_")
+    )
         
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns=["Unnamed: 0"])

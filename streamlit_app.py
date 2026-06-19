@@ -281,9 +281,9 @@ def app():
                     sex=user_input["sex"],
                     job=user_input["job"],
                     housing=user_input["housing"],
-                    saving_accounts=user_input["saving accounts"],
-                    checking_account=user_input["checking account"],
-                    credit_amount=user_input["credit amount"],
+                    saving_accounts=user_input["saving_accounts"],
+                    checking_account=user_input["checking_account"],
+                    credit_amount=user_input["credit_amount"],
                     duration=user_input["duration"],
                     purpose=user_input["purpose"],
                 )

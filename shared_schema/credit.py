@@ -5,9 +5,9 @@ class CreditRequest(BaseModel):
     sex: str 
     job: int 
     housing: str 
-    saving accounts: str 
-    checking account: str 
-    credit amount: float = Field(gt=0) 
+    saving_accounts: str 
+    checking_account: str 
+    credit_amount: float = Field(gt=0) 
     duration: int = Field(gt=0)
     purpose: str 
     
