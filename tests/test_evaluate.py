@@ -7,6 +7,7 @@ def test_predict_shape():
     model = joblib.load("models/xgboost_pipeline.pkl")
 
     df = pd.DataFrame([{
+        "unnamed:_0": 0,
         "age": 35,
         "sex": "male",
         "job": 2,
