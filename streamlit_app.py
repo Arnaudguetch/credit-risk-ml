@@ -219,12 +219,21 @@ def app():
 
     for col in X_ref.columns:
         if pd.api.types.is_numeric_dtype(X_ref[col]):
-            user_input[col] = st.number_input(
-                label=col,
-                min_value=float(X_ref[col].min()),
-                max_value=float(X_ref[col].max()),
-                value=float(X_ref[col].mean()),
-            )
+            if col in ["age", "job", "duration"]:
+                user_input[col] = st.number_input(
+                    label=col,
+                    min_value=int(X_ref[col].min()),
+                    max_value=int(X_ref[col].max()),
+                    value=int(X_ref[col].mean()),
+                    step=1
+                )
+            else:
+                user_input[col] = st.number_input(
+                    label=col,
+                    min_value=float(X_ref[col].min()),
+                    max_value=float(X_ref[col].max()),
+                    value=float(X_ref[col].mean()),
+                )
         else:
             values = sorted(X_ref[col].dropna().unique().tolist())
             user_input[col] = st.selectbox(
