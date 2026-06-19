@@ -25,6 +25,9 @@ def test_predict():
 
     with TestClient(app) as client:
         response = client.post("/predict", json=sample_input)
+        
+        print(response.status_code)
+        print(response.json()) 
 
     assert response.status_code == 200
 

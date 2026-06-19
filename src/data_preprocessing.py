@@ -19,6 +19,20 @@ def load_data(csv_path: str | Path) -> pd.DataFrame:
         raise FileNotFoundError(f"Dataset not found at: {csv_path}")
     df = pd.read_csv(csv_path)
     
+    df.columns = df.columns.str.strip()
+    
+    df = df.rename(columns={
+        "Age": "age",
+        "Sex": "sex",
+        "Job": "job",
+        "Housing": "housing",
+        "Saving accounts": "saving_accounts",
+        "Checking account": "checking_account",
+        "Credit amount": "credit_amount",
+        "Duration": "duration",
+        "Purpose": "purpose"
+    })
+        
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns=["Unnamed: 0"])
     return df
@@ -83,6 +97,7 @@ def save_object(obj, output_path: str | Path) -> None:
 if __name__ == "__main__":
     raw_path = Path("data/raw/german_credit_data.csv")
     df = load_data(raw_path)
+    print(df.columns)
     X,y = split_features_target(df, target_col="Risk")
     preprocessor = build_preprocessor(X)
     save_object(preprocessor, "models/preprocessor.pkl")
