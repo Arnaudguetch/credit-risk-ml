@@ -276,17 +276,12 @@ def app():
     if st.button("🔍 Prédire le risque"):
         try:
             with st.spinner("Analyse du profil client en cours..."):
-                payload = CreditRequest(
-                    age=user_input["age"],
-                    sex=user_input["sex"],
-                    job=user_input["job"],
-                    housing=user_input["housing"],
-                    saving_accounts=user_input["saving_accounts"],
-                    checking_account=user_input["checking_account"],
-                    credit_amount=user_input["credit_amount"],
-                    duration=user_input["duration"],
-                    purpose=user_input["purpose"],
-                )
+                user_input = {
+                    k.lower().replace(" ", "_"): v
+                    for k, v in user_input.items()
+                }
+                
+                payload = CreditRequest(**user_input)
                 
                 response = requests.post(
                     f"{API_URL}/predict",
