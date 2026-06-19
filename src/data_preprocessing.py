@@ -19,19 +19,7 @@ def load_data(csv_path: str | Path) -> pd.DataFrame:
         raise FileNotFoundError(f"Dataset not found at: {csv_path}")
     df = pd.read_csv(csv_path)
     
-    df.columns = df.columns.str.strip()
-    
-    df = df.rename(columns={
-        "Age": "age",
-        "Sex": "sex",
-        "Job": "job",
-        "Housing": "housing",
-        "Saving accounts": "saving_accounts",
-        "Checking account": "checking_account",
-        "Credit amount": "credit_amount",
-        "Duration": "duration",
-        "Purpose": "purpose"
-    })
+    df.columns = df.columns.str.lower()
         
     if "Unnamed: 0" in df.columns:
         df = df.drop(columns=["Unnamed: 0"])

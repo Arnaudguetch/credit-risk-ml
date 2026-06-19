@@ -50,6 +50,7 @@ def predict(payload: CreditRequest):
 
     try:
         df = pd.DataFrame([payload.model_dump()]) 
+        df.columns = df.columns.str.lower()
         proba = model.predict_proba(df)[0][1]
 
         return {

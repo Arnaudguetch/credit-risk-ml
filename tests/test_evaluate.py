@@ -7,16 +7,16 @@ def test_predict_shape():
     model = joblib.load("models/xgboost_pipeline.pkl")
 
     df = pd.DataFrame([{
-    "Age": 35,
-    "Sex": "male",
-    "Job": 2,
-    "Housing": "own",
-    "Saving accounts": "little",
-    "Checking account": "little",
-    "Credit amount": 5000,
-    "Duration": 24,
-    "Purpose": "car"
-}])
+        "age": 35,
+        "sex": "male",
+        "job": 2,
+        "housing": "own",
+        "saving_accounts": "little",
+        "checking_account": "little",
+        "credit_amount": 5000,
+        "duration": 24,
+        "purpose": "car"
+    }])
 
     pred = model.predict(df)
 
