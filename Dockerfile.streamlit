@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 
 COPY streamlit_app.py .
 COPY data/ data/
+COPY shared_schema/ shared_schema/
+
+ENV PYTHONPATH=/app
 
 RUN chown -R 1001:1001 /app
 
