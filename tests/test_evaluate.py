@@ -11,9 +11,9 @@ def test_predict_shape():
         "sex": "male",
         "job": 2,
         "housing": "own",
-        "saving accounts": "little",
-        "checking account": "little",
-        "credit amount": 5000,
+        "saving_accounts": "little",
+        "checking_account": "little",
+        "credit_amount": 5000,
         "duration": 24,
         "purpose": "car"
     }])
